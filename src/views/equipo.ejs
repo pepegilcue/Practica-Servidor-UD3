@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="UTF-8"><title><%= equipo.nombre %></title></head>
+<body>
+<p><a href="/equipos">Volver al listado</a></p>
+<h1><%= equipo.nombre %></h1>
+<ul>
+  <li>Código: <%= equipo.codigo %></li>
+  <li>Categoría: <%= equipo.categoria %></li>
+  <li>Estado: <%= equipo.disponible ? "Disponible" : "Prestado" %></li>
+  <% if (equipo.prestado_a) { %><li>Prestado a: <%= equipo.prestado_a %></li><% } %>
+</ul>
+
+<h2>Historial de préstamos</h2>
+<% if (prestamos.length === 0) { %>
+  <p>Este equipo no tiene préstamos.</p>
+<% } else { %>
+  <table border="1">
+    <thead><tr><th>Usuario</th><th>Préstamo</th><th>Devolución</th></tr></thead>
+    <tbody>
+    <% for (const p of prestamos) { %>
+      <tr>
+        <td><%= p.usuario %></td>
+        <td><%= new Date(p.fecha_prestamo).toLocaleString("es-ES") %></td>
+        <td><%= p.fecha_devolucion ? new Date(p.fecha_devolucion).toLocaleString("es-ES") : "Activo" %></td>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
+<% } %>
+</body>
+</html>

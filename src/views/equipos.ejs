@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Equipos</title></head>
+<body>
+<h1>Equipos</h1>
+
+<form method="get" action="/equipos">
+  <label for="q">Nombre</label>
+  <input id="q" name="q" value="<%= filtros.q %>">
+
+  <label for="categoria">Categoría</label>
+  <select id="categoria" name="categoria">
+    <option value="">Todas</option>
+    <% for (const c of categorias) { %>
+      <option value="<%= c %>" <%= c === filtros.categoria ? "selected" : "" %>><%= c %></option>
+    <% } %>
+  </select>
+
+  <label for="disponible">Estado</label>
+  <select id="disponible" name="disponible">
+    <option value="">Todos</option>
+    <option value="true" <%= filtros.disponible === "true" ? "selected" : "" %>>Disponible</option>
+    <option value="false" <%= filtros.disponible === "false" ? "selected" : "" %>>Prestado</option>
+  </select>
+
+  <label for="orden">Ordenar por</label>
+  <select id="orden" name="orden">
+    <option value="codigo" <%= filtros.orden === "codigo" ? "selected" : "" %>>Código</option>
+    <option value="nombre" <%= filtros.orden === "nombre" ? "selected" : "" %>>Nombre</option>
+  </select>
+
+  <button type="submit">Filtrar</button>
+</form>
+
+<% if (equipos.length === 0) { %>
+  <p>No hay equipos que coincidan con la búsqueda.</p>
+<% } else { %>
+  <table border="1">
+    <thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Estado</th></tr></thead>
+    <tbody>
+    <% for (const e of equipos) { %>
+      <tr>
+        <td><a href="/equipos/<%= e.id %>"><%= e.codigo %></a></td>
+        <td><%= e.nombre %></td>
+        <td><%= e.categoria %></td>
+        <td><%= e.disponible ? "Disponible" : "Prestado" %></td>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
+
+  <%
+    const base = new URLSearchParams();
+    if (filtros.q) base.set("q", filtros.q);
+    if (filtros.categoria) base.set("categoria", filtros.categoria);
+    if (filtros.disponible) base.set("disponible", filtros.disponible);
+    base.set("orden", filtros.orden);
+    const enlace = (p) => { const u = new URLSearchParams(base); u.set("pagina", p); return "/equipos?" + u.toString(); };
+  %>
+  <p>
+    <% if (pagina > 1) { %><a href="<%= enlace(pagina - 1) %>">Anterior</a><% } %>
+    Página <%= pagina %> de <%= totalPaginas %> (<%= total %> equipos)
+    <% if (pagina < totalPaginas) { %><a href="<%= enlace(pagina + 1) %>">Siguiente</a><% } %>
+  </p>
+<% } %>
+</body>
+</html>
